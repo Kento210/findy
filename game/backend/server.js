@@ -85,10 +85,16 @@ io.on('connection', (socket) => {
         opponentEvaluation: player1Evaluation
       })
 
-      // 3秒後に自動判定を実行
+      // 2秒後に自動判定を実行
       setTimeout(() => {
+        console.log('Starting judgment process...')
+        console.log('Player1 score:', player1Evaluation.normalizedScore)
+        console.log('Player2 score:', player2Evaluation.normalizedScore)
+        
         const winner = player1Evaluation.normalizedScore > player2Evaluation.normalizedScore ? 'player1' : 
                       player2Evaluation.normalizedScore > player1Evaluation.normalizedScore ? 'player2' : 'tie'
+        
+        console.log('Winner determined:', winner)
         
         const result = {
           winner: winner,
@@ -103,6 +109,8 @@ io.on('connection', (socket) => {
         }
 
         // 両プレイヤーに結果を送信
+        console.log('Sending results to players...')
+        
         opponent.socket.emit('gameResult', {
           ...result,
           isWinner: winner === 'player1',
@@ -117,9 +125,11 @@ io.on('connection', (socket) => {
           opponentScore: player1Evaluation.normalizedScore
         })
         
+        console.log('Results sent, cleaning up game...')
+        
         // ゲーム終了後にゲームを削除
         games.delete(gameId)
-      }, 3000) // 3秒の判定時間
+      }, 2000) // 2秒の判定時間
 
     } else {
       // 待機リストに追加

@@ -31,6 +31,11 @@ const correctAnswer = {
   ]
 }
 
+/**
+ * パターンマッチングを使用してルート回答を評価する
+ * @param {string} userOutput - ユーザーが入力したAI出力
+ * @returns {Object} 評価結果オブジェクト
+ */
 function evaluateRoute(userOutput) {
   console.log('Evaluating route:', userOutput.substring(0, 100) + '...')
   
@@ -48,7 +53,7 @@ function evaluateRoute(userOutput) {
 
   const output = userOutput.toLowerCase()
 
-  // 基本情報の採点（シンプルなパターンマッチング）
+  // 基本情報の採点: ビル名とフロア情報の確認
   if (output.includes("アートヴィレッジ") || output.includes("アートビレッジ") || 
       output.includes("art village") || output.includes("セントラルタワー")) {
     evaluation.categories.basicInfo.score += 10
@@ -60,7 +65,7 @@ function evaluateRoute(userOutput) {
     evaluation.categories.basicInfo.items.push("正しいフロア情報")
   }
 
-  // 時間の正確性（数字を含む簡単なマッチング）
+  // 時間の正確性: 所要時間の記載をチェック
   const timePatterns = [/(\d+)分/, /(\d+)min/, /約(\d+)/, /(\d+)minute/]
   let timeFound = false
   
@@ -83,7 +88,7 @@ function evaluateRoute(userOutput) {
     }
   }
 
-  // ルートの正確性（基本的なキーワードマッチング）
+  // ルートの正確性: 重要なキーワードの存在確認
   const routeKeywords = [
     { word: "大崎駅", score: 8, desc: "出発地点" },
     { word: "北改札", score: 6, desc: "正しい改札口" },
@@ -105,7 +110,7 @@ function evaluateRoute(userOutput) {
   
   evaluation.categories.routeAccuracy.score = Math.min(evaluation.categories.routeAccuracy.score, 40)
 
-  // 詳細情報（追加ポイント）
+  // 詳細情報: 追加の有用な情報をチェック
   const detailKeywords = [
     { keyword: "雨", point: 5, description: "屋内ルート情報" },
     { keyword: "エレベーター", point: 4, description: "ビル内移動手段" },
@@ -124,7 +129,7 @@ function evaluateRoute(userOutput) {
   
   evaluation.categories.keyDetails.score = Math.min(evaluation.categories.keyDetails.score, 25)
 
-  // 総合スコア計算
+  // 総合スコア計算: 各カテゴリーのスコアを合計
   evaluation.totalScore = Object.values(evaluation.categories).reduce((sum, cat) => sum + cat.score, 0)
 
   // 10点満点に正規化

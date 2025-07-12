@@ -80,12 +80,7 @@ function App() {
 
         {gameState === 'waiting' && <WaitingScreen />}
 
-        {gameState === 'judging' && (
-          <Box sx={{ textAlign: 'center', py: 4 }}>
-            <Typography variant="h5">判定中...</Typography>
-            <Typography variant="body1" sx={{ mt: 2 }}>AIが回答を評価しています</Typography>
-          </Box>
-        )}
+        {gameState === 'judging' && <JudgingScreen />}
 
         {gameState === 'battle' && currentGame && (
           <Grid container spacing={3}>

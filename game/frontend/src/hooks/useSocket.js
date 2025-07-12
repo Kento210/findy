@@ -73,10 +73,11 @@ export function useSocket() {
       
       setCurrentGame(gameData)
       
-      // 3秒後に判定画面に移行
+      // 1秒後に判定画面に移行
       setTimeout(() => {
+        console.log('Moving to judging state...')
         setGameState('judging')
-      }, 2000)
+      }, 1000)
     })
 
     newSocket.on('gameResult', (data) => {
