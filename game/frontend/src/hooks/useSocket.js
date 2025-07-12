@@ -26,21 +26,48 @@ export function useSocket() {
       // 評価データを保存
       const opponentRole = data.playerRole === 'player1' ? 'player2' : 'player1'
       setEvaluations({
-        [data.playerRole]: data.evaluation,
-        [opponentRole]: data.opponentEvaluation
+        [data.playerRole]: data.evaluation || null,
+        [opponentRole]: data.opponentEvaluation || null
       })
       
       // プレイヤー情報を正しく設定
       const gameData = {
         player1: {
-          model: data.playerRole === 'player1' ? '' : data.opponent.model || 'Unknown',
-          output: data.playerRole === 'player1' ? '' : data.opponent.output || '',
-          score: data.playerRole === 'player1' ? data.evaluation.normalizedScore : data.opponentEvaluation.normalizedScore
+          model: data.opponent.model || 'Unknown',
+          output: data.opponent.output || '',
+          score: data.opponentEvaluation?.normalizedScore || 0
         },
         player2: {
-          model: data.playerRole === 'player2' ? '' : data.opponent.model || 'Unknown',
-          output: data.playerRole === 'player2' ? '' : data.opponent.output || '',
-          score: data.playerRole === 'player2' ? data.evaluation.normalizedScore : data.opponentEvaluation.normalizedScore
+          model: data.opponent.model || 'Unknown',
+          output: data.opponent.output || '',
+          score: data.evaluation?.normalizedScore || 0
+        }
+      }
+      
+      // 自分のデータを設定
+      const playerData = window.playerInputData || { model: 'Unknown', output: '' }
+      
+      if (data.playerRole === 'player1') {
+        gameData.player1 = {
+          model: playerData.model || 'Unknown',
+          output: playerData.output || '', 
+          score: data.evaluation?.normalizedScore || 0
+        }
+        gameData.player2 = {
+          model: data.opponent.model || 'Unknown',
+          output: data.opponent.output || '',
+          score: data.opponentEvaluation?.normalizedScore || 0
+        }
+      } else {
+        gameData.player1 = {
+          model: data.opponent.model || 'Unknown',
+          output: data.opponent.output || '',
+          score: data.opponentEvaluation?.normalizedScore || 0
+        }
+        gameData.player2 = {
+          model: playerData.model || 'Unknown',
+          output: playerData.output || '',
+          score: data.evaluation?.normalizedScore || 0
         }
       }
       
@@ -73,6 +100,8 @@ export function useSocket() {
   const findMatch = (playerData) => {
     if (socket) {
       socket.emit('findMatch', playerData)
+      // 自分の入力データを一時保存
+      window.playerInputData = playerData
     }
   }
 

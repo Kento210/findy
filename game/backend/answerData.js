@@ -32,6 +32,8 @@ const correctAnswer = {
 }
 
 function evaluateRoute(userOutput) {
+  console.log('Evaluating route:', userOutput.substring(0, 100) + '...')
+  
   const evaluation = {
     totalScore: 0,
     maxScore: 100,
@@ -46,53 +48,71 @@ function evaluateRoute(userOutput) {
 
   const output = userOutput.toLowerCase()
 
-  // 基本情報の採点
-  if (output.includes("アートヴィレッジ大崎セントラルタワー") || output.includes("アートビレッジ") || output.includes("art village")) {
+  // 基本情報の採点（シンプルなパターンマッチング）
+  if (output.includes("アートヴィレッジ") || output.includes("アートビレッジ") || 
+      output.includes("art village") || output.includes("セントラルタワー")) {
     evaluation.categories.basicInfo.score += 10
     evaluation.categories.basicInfo.items.push("正しいビル名を記載")
   }
 
-  if (output.includes("5階") || output.includes("5f") || output.includes("fifth floor")) {
+  if (output.includes("5階") || output.includes("5f") || output.includes("5 階")) {
     evaluation.categories.basicInfo.score += 10  
     evaluation.categories.basicInfo.items.push("正しいフロア情報")
   }
 
-  // 時間の正確性
-  const timeMatch = output.match(/(\d+)分/)
-  if (timeMatch) {
-    const mentionedTime = parseInt(timeMatch[1])
-    if (mentionedTime >= 4 && mentionedTime <= 6) {
-      evaluation.categories.timeAccuracy.score += 15
-      evaluation.categories.timeAccuracy.items.push("正確な所要時間（約5分）")
-    } else if (mentionedTime >= 3 && mentionedTime <= 8) {
-      evaluation.categories.timeAccuracy.score += 10
-      evaluation.categories.timeAccuracy.items.push("おおよそ正しい所要時間")
-    } else {
-      evaluation.categories.timeAccuracy.score += 5
-      evaluation.categories.timeAccuracy.items.push("時間情報はあるが不正確")
+  // 時間の正確性（数字を含む簡単なマッチング）
+  const timePatterns = [/(\d+)分/, /(\d+)min/, /約(\d+)/, /(\d+)minute/]
+  let timeFound = false
+  
+  for (const pattern of timePatterns) {
+    const timeMatch = output.match(pattern)
+    if (timeMatch && !timeFound) {
+      timeFound = true
+      const mentionedTime = parseInt(timeMatch[1])
+      if (mentionedTime >= 4 && mentionedTime <= 6) {
+        evaluation.categories.timeAccuracy.score += 15
+        evaluation.categories.timeAccuracy.items.push("正確な所要時間（約5分）")
+      } else if (mentionedTime >= 2 && mentionedTime <= 10) {
+        evaluation.categories.timeAccuracy.score += 10
+        evaluation.categories.timeAccuracy.items.push("おおよそ正しい所要時間")
+      } else if (mentionedTime > 0) {
+        evaluation.categories.timeAccuracy.score += 5
+        evaluation.categories.timeAccuracy.items.push("時間情報はあるが不正確")
+      }
+      break
     }
   }
 
-  // ルートの正確性
-  let routeAccuracyScore = 0
-  const routeKeywords = ["北改札", "東口", "newdays", "エスカレーター", "左折", "右折", "直進"]
+  // ルートの正確性（基本的なキーワードマッチング）
+  const routeKeywords = [
+    { word: "大崎駅", score: 8, desc: "出発地点" },
+    { word: "北改札", score: 6, desc: "正しい改札口" },
+    { word: "東口", score: 6, desc: "正しい出口" },
+    { word: "徒歩", score: 4, desc: "移動手段" },
+    { word: "直進", score: 3, desc: "方向指示" },
+    { word: "左", score: 2, desc: "曲がる方向" },
+    { word: "右", score: 2, desc: "曲がる方向" },
+    { word: "エスカレーター", score: 4, desc: "重要な経路" },
+    { word: "通路", score: 3, desc: "経路情報" }
+  ]
   
-  routeKeywords.forEach(keyword => {
-    if (output.includes(keyword)) {
-      routeAccuracyScore += 5
-      evaluation.categories.routeAccuracy.items.push(`重要なルート情報: ${keyword}`)
+  routeKeywords.forEach(item => {
+    if (output.includes(item.word)) {
+      evaluation.categories.routeAccuracy.score += item.score
+      evaluation.categories.routeAccuracy.items.push(`${item.desc}: ${item.word}`)
     }
   })
   
-  evaluation.categories.routeAccuracy.score = Math.min(routeAccuracyScore, 40)
+  evaluation.categories.routeAccuracy.score = Math.min(evaluation.categories.routeAccuracy.score, 40)
 
-  // 重要な詳細情報
+  // 詳細情報（追加ポイント）
   const detailKeywords = [
-    { keyword: "雨", point: 5, description: "雨に濡れない情報" },
-    { keyword: "中央", point: 5, description: "中央エレベーター情報" },
-    { keyword: "ipad", point: 5, description: "受付iPad情報" },
-    { keyword: "findy blue", point: 5, description: "待機場所情報" },
-    { keyword: "20時", point: 5, description: "夜間アクセス情報" }
+    { keyword: "雨", point: 5, description: "屋内ルート情報" },
+    { keyword: "エレベーター", point: 4, description: "ビル内移動手段" },
+    { keyword: "受付", point: 4, description: "到着後の手続き" },
+    { keyword: "findy", point: 6, description: "目的地企業名" },
+    { keyword: "600m", point: 3, description: "距離情報" },
+    { keyword: "メートル", point: 2, description: "距離の単位" }
   ]
 
   detailKeywords.forEach(item => {
@@ -101,12 +121,19 @@ function evaluateRoute(userOutput) {
       evaluation.categories.keyDetails.items.push(item.description)
     }
   })
+  
+  evaluation.categories.keyDetails.score = Math.min(evaluation.categories.keyDetails.score, 25)
 
   // 総合スコア計算
   evaluation.totalScore = Object.values(evaluation.categories).reduce((sum, cat) => sum + cat.score, 0)
 
   // 10点満点に正規化
-  evaluation.normalizedScore = Math.round((evaluation.totalScore / evaluation.maxScore) * 10)
+  evaluation.normalizedScore = Math.max(1, Math.round((evaluation.totalScore / evaluation.maxScore) * 10))
+
+  console.log('Evaluation result:', { 
+    totalScore: evaluation.totalScore, 
+    normalizedScore: evaluation.normalizedScore 
+  })
 
   return evaluation
 }

@@ -6,7 +6,6 @@ import {
   TextField, 
   Chip 
 } from '@mui/material'
-import EvaluationDetails from './EvaluationDetails'
 
 export default function PlayerCard({ 
   player, 
@@ -14,16 +13,15 @@ export default function PlayerCard({
   evaluation 
 }) {
   return (
-    <Card elevation={3} sx={{ height: 'fit-content', minHeight: { lg: '600px' } }}>
-      <CardContent sx={{ p: { xs: 2, md: 3, lg: 4 } }}>
+    <Card elevation={1} sx={{ height: 'fit-content' }}>
+      <CardContent sx={{ p: 3 }}>
         <Box display="flex" alignItems="center" mb={2} flexWrap="wrap" gap={1}>
           <Chip 
             label={player.model} 
             color={title === "あなた" ? "primary" : "secondary"}
-            size={window.innerWidth >= 1200 ? "medium" : "small"}
-            sx={{ fontSize: { lg: '1rem' } }}
+            size="small"
           />
-          <Typography variant={{ xs: "subtitle1", md: "h6", lg: "h5" }}>
+          <Typography variant="h6">
             {title}
           </Typography>
         </Box>
@@ -31,30 +29,33 @@ export default function PlayerCard({
         <TextField
           fullWidth
           multiline
-          rows={{ xs: 3, md: 4, lg: 8 }}
+          rows={4}
           value={player.output}
           disabled
           label={`${title}のAI出力`}
-          sx={{ 
-            mb: 2,
-            '& .MuiInputBase-input': {
-              fontSize: { lg: '1.1rem' },
-              lineHeight: { lg: 1.6 }
-            }
-          }}
+          sx={{ mb: 2 }}
         />
         
-        <Box display="flex" alignItems="center" justifyContent="center" p={{ xs: 2, lg: 3 }}>
-          <Typography variant={{ xs: "h6", md: "h5", lg: "h4" }} color="primary">
+        <Box display="flex" alignItems="center" justifyContent="center" p={2}>
+          <Typography variant="h6" color="primary">
             最終スコア: {player.score ? `${player.score}/10` : '判定中...'}
           </Typography>
         </Box>
         
         {evaluation && (
-          <EvaluationDetails 
-            evaluation={evaluation} 
-            title={`${title}のAI評価`}
-          />
+          <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              {title}のAI評価
+            </Typography>
+            <Typography variant="body2">
+              総合スコア: {evaluation.totalScore || 0}/{evaluation.maxScore || 100}
+            </Typography>
+            {evaluation.multiplier && evaluation.multiplier !== 1.0 && (
+              <Typography variant="caption" color="warning.main">
+                モデル倍率: ×{evaluation.multiplier}
+              </Typography>
+            )}
+          </Box>
         )}
       </CardContent>
     </Card>

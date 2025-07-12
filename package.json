@@ -1,0 +1,18 @@
+{
+  "name": "ai-route-battle",
+  "version": "1.0.0",
+  "description": "AI Route Battle - 大崎駅からFindyオフィスまでのルート対戦ゲーム",
+  "scripts": {
+    "build": "./build.sh",
+    "start": "./start.sh",
+    "install-all": "cd game/frontend && npm install && cd ../backend && npm install",
+    "dev": "./start.sh"
+  },
+  "keywords": ["ai", "game", "route", "battle"],
+  "author": "",
+  "license": "MIT",
+  "workspaces": [
+    "game/frontend",
+    "game/backend"
+  ]
+}

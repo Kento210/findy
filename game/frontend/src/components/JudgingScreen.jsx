@@ -1,108 +1,64 @@
-import { Paper, Typography, Box, CircularProgress, LinearProgress } from '@mui/material'
+import { Paper, Typography, Box, CircularProgress } from '@mui/material'
 import { useState, useEffect } from 'react'
 
 export default function JudgingScreen() {
   const [progress, setProgress] = useState(0)
-  const [currentStep, setCurrentStep] = useState(0)
+  const [step, setStep] = useState(0)
   
   const steps = [
-    '🤖 AI出力を分析中...',
-    '📊 ルート精度を評価中...',
-    '⚖️ モデル倍率を適用中...',
-    '🏆 勝者を判定中...'
+    '📊 ルート情報を解析中...',
+    '🔍 キーワードをチェック中...',
+    '⚖️ スコアを計算中...',
+    '🏆 勝者を決定中...'
   ]
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) => {
-        const newProgress = prevProgress + 1
-        const stepIndex = Math.floor(newProgress / 25)
-        setCurrentStep(stepIndex)
-        
-        if (newProgress >= 100) {
-          clearInterval(timer)
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval)
           return 100
+        }
+        const newProgress = prev + 10
+        const newStep = Math.floor(newProgress / 25)
+        if (newStep !== step && newStep < steps.length) {
+          setStep(newStep)
         }
         return newProgress
       })
-    }, 30) // 3秒で100%
+    }, 100) // より速い更新で滑らかなアニメーション
 
-    return () => clearInterval(timer)
-  }, [])
+    return () => clearInterval(interval)
+  }, [step, steps.length])
 
   return (
-    <Paper 
-      elevation={3} 
-      sx={{ 
-        p: { xs: 3, md: 6 }, 
-        mb: { xs: 2, md: 4 },
-        textAlign: 'center',
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: '20px',
-      }}
-    >
-      <Typography variant={{ xs: "h5", md: "h4" }} gutterBottom color="primary">
-        🔍 AI判定中...
-      </Typography>
-      
-      <Box sx={{ my: 4 }}>
-        <Box sx={{ position: 'relative', display: 'inline-flex', mb: 3 }}>
+    <Box sx={{ textAlign: 'center', py: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, mb: 4, bgcolor: 'background.paper' }}>
+        <Typography variant="h5" gutterBottom color="primary">
+          🔍 判定中...
+        </Typography>
+        
+        <Box sx={{ my: 3 }}>
           <CircularProgress
             variant="determinate"
             value={progress}
-            size={120}
+            size={80}
             thickness={4}
-            sx={{
-              color: 'primary.main',
-              '& .MuiCircularProgress-circle': {
-                strokeLinecap: 'round',
-              },
-            }}
+            sx={{ mb: 2 }}
           />
-          <Box
-            sx={{
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              position: 'absolute',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Typography variant="h6" component="div" color="primary">
-              {Math.round(progress)}%
-            </Typography>
-          </Box>
+          <Typography variant="h6" color="primary">
+            {progress}%
+          </Typography>
         </Box>
         
-        <Typography variant={{ xs: "body1", md: "h6" }} color="text.secondary" gutterBottom>
-          {steps[currentStep] || steps[steps.length - 1]}
+        <Typography variant="body1" color="text.secondary">
+          {steps[step]}
         </Typography>
         
-        <Box sx={{ mt: 3, mb: 2 }}>
-          <LinearProgress 
-            variant="determinate" 
-            value={progress} 
-            sx={{
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              '& .MuiLinearProgress-bar': {
-                borderRadius: 4,
-                background: 'linear-gradient(45deg, #00e5ff, #ff4081)',
-              },
-            }}
-          />
-        </Box>
-        
-        <Typography variant="caption" color="text.secondary">
-          高精度なAIアルゴリズムで公正な判定を行っています
+        <Typography variant="caption" display="block" sx={{ mt: 2 }}>
+          高精度なパターンマッチングで判定中...
         </Typography>
-      </Box>
-    </Paper>
+      </Paper>
+    </Box>
   )
 }
