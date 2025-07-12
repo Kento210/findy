@@ -1,0 +1,6 @@
+/game/*/node_modules/
+/game/*/dist/
+/game/*/build/
+/game/*/out/
+/game/*/coverage/
+/game/*/.env
