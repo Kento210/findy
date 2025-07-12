@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: ai-route-battle-backend
+    env: node
+    plan: free
+    buildCommand: npm run build:backend
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+
+  - type: static
+    name: ai-route-battle-frontend
+    env: static
+    plan: free
+    buildCommand: npm run build:frontend
+    staticPublishPath: ./game/frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

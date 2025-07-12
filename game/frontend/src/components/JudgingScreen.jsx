@@ -38,8 +38,8 @@ export default function JudgingScreen() {
   }, [step, steps.length])
 
   return (
-    <Box sx={{ textAlign: 'center', py: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, mb: 4, bgcolor: 'background.paper' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, mb: 4, bgcolor: 'background.paper', maxWidth: '600px', width: '100%', textAlign: 'center' }}>
         <Typography variant="h5" gutterBottom color="primary">
           🔍 判定中...
         </Typography>

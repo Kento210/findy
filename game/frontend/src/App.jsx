@@ -60,7 +60,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ py: 4, px: { xs: 2, sm: 3 }, textAlign: 'center' }}>
         <Typography variant="h3" component="h1" gutterBottom align="center" sx={{ mb: 2 }}>
           AI Route Battle
         </Typography>
@@ -83,53 +83,59 @@ function App() {
         {gameState === 'judging' && <JudgingScreen />}
 
         {gameState === 'battle' && currentGame && (
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <PlayerCard 
-                player={currentGame.player1}
-                title={playerRole === 'player1' ? 'あなた' : '対戦相手'}
-                evaluation={evaluations?.player1}
-              />
-            </Grid>
+          <Box sx={{ textAlign: 'left' }}>
+            <Grid container spacing={3} justifyContent="center">
+              <Grid item xs={12} md={6}>
+                <PlayerCard 
+                  player={currentGame.player1}
+                  title={playerRole === 'player1' ? 'あなた' : '対戦相手'}
+                  evaluation={evaluations?.player1}
+                />
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <PlayerCard 
-                player={currentGame.player2}
-                title={playerRole === 'player2' ? 'あなた' : '対戦相手'}
-                evaluation={evaluations?.player2}
-              />
+              <Grid item xs={12} md={6}>
+                <PlayerCard 
+                  player={currentGame.player2}
+                  title={playerRole === 'player2' ? 'あなた' : '対戦相手'}
+                  evaluation={evaluations?.player2}
+                />
+              </Grid>
             </Grid>
-          </Grid>
+          </Box>
         )}
 
         {gameState === 'result' && gameResult && currentGame && (
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <PlayerCard 
-                player={currentGame.player1}
-                title={playerRole === 'player1' ? 'あなた' : '対戦相手'}
-                evaluation={evaluations?.player1}
-              />
-            </Grid>
+          <Box sx={{ textAlign: 'left' }}>
+            <Grid container spacing={3} justifyContent="center">
+              <Grid item xs={12} md={6}>
+                <PlayerCard 
+                  player={currentGame.player1}
+                  title={playerRole === 'player1' ? 'あなた' : '対戦相手'}
+                  evaluation={evaluations?.player1}
+                />
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <PlayerCard 
-                player={currentGame.player2}
-                title={playerRole === 'player2' ? 'あなた' : '対戦相手'}
-                evaluation={evaluations?.player2}
-              />
+              <Grid item xs={12} md={6}>
+                <PlayerCard 
+                  player={currentGame.player2}
+                  title={playerRole === 'player2' ? 'あなた' : '対戦相手'}
+                  evaluation={evaluations?.player2}
+                />
+              </Grid>
+              
+              <Grid item xs={12}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <GameResult 
+                    winner={gameResult.winner}
+                    player1Score={gameResult.scores.player1}
+                    player2Score={gameResult.scores.player2}
+                    isWinner={gameResult.isWinner}
+                    onNewGame={handleNewGame}
+                  />
+                </Box>
+              </Grid>
             </Grid>
-            
-            <Grid item xs={12}>
-              <GameResult 
-                winner={gameResult.winner}
-                player1Score={gameResult.scores.player1}
-                player2Score={gameResult.scores.player2}
-                isWinner={gameResult.isWinner}
-                onNewGame={handleNewGame}
-              />
-            </Grid>
-          </Grid>
+          </Box>
         )}
       </Container>
     </ThemeProvider>

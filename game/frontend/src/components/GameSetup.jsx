@@ -23,7 +23,8 @@ export default function GameSetup({
   onSubmit 
 }) {
   return (
-    <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+      <Paper elevation={1} sx={{ p: 3, maxWidth: '900px', width: '100%' }}>
       <Typography variant="h5" gutterBottom align="center" color="primary" sx={{ mb: 3 }}>
         ルート情報を入力してバトル開始
       </Typography>
@@ -111,6 +112,7 @@ export default function GameSetup({
           </Button>
         </Grid>
       </Grid>
-    </Paper>
+      </Paper>
+    </Box>
   )
 }

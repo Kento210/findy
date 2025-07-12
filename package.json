@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "AI Route Battle - 大崎駅からFindyオフィスまでのルート対戦ゲーム",
   "scripts": {
-    "build": "./build.sh",
-    "start": "./start.sh",
-    "install-all": "cd game/frontend && npm install && cd ../backend && npm install",
-    "dev": "./start.sh"
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd game/frontend && npm install && npm run build",
+    "build:backend": "cd game/backend && npm install",
+    "start": "cd game/backend && npm start",
+    "dev": "./start.sh",
+    "install-all": "npm run build:frontend && npm run build:backend"
   },
   "keywords": ["ai", "game", "route", "battle"],
   "author": "",

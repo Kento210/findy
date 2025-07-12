@@ -4,3 +4,4 @@
 /game/*/out/
 /game/*/coverage/
 /game/*/.env
+/node_modules/
