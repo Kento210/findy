@@ -1,10 +1,16 @@
 import { Paper, Typography, Box, CircularProgress } from '@mui/material'
 import { useState, useEffect } from 'react'
 
+/**
+ * 判定中のローディング画面コンポーネント
+ * パターンマッチングによる判定プロセスを視覚的に表示
+ * @returns {JSX.Element} 判定ローディングコンポーネント
+ */
 export default function JudgingScreen() {
   const [progress, setProgress] = useState(0)
   const [step, setStep] = useState(0)
   
+  // 判定プロセスのステップ表示
   const steps = [
     '📊 ルート情報を解析中...',
     '🔍 キーワードをチェック中...',
@@ -26,7 +32,7 @@ export default function JudgingScreen() {
         }
         return newProgress
       })
-    }, 100) // より速い更新で滑らかなアニメーション
+    }, 100) // 100ms間隔で滑らかなプログレスアニメーション
 
     return () => clearInterval(interval)
   }, [step, steps.length])

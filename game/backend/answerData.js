@@ -143,7 +143,10 @@ function evaluateRoute(userOutput) {
   return evaluation
 }
 
-// AIモデルの倍率設定
+/**
+ * AIモデルのスコア倍率設定
+ * プレミアムモデルほど低い倍率でペナルティを適用
+ */
 const modelMultipliers = {
   'OpenAI 4o': 0.8,
   'OpenAI o3': 0.6,
@@ -152,10 +155,21 @@ const modelMultipliers = {
   'Claude Opus 4': 0.5
 }
 
+/**
+ * モデル名に基づいて倍率を取得
+ * @param {string} modelName - AIモデル名
+ * @returns {number} 倍率 (1.0がデフォルト)
+ */
 function getModelMultiplier(modelName) {
   return modelMultipliers[modelName] || 1.0
 }
 
+/**
+ * モデル倍率を適用して評価スコアを調整
+ * @param {Object} evaluation - ベース評価オブジェクト
+ * @param {string} modelName - AIモデル名
+ * @returns {Object} 倍率適用後の評価オブジェクト
+ */
 function applyModelMultiplier(evaluation, modelName) {
   const multiplier = getModelMultiplier(modelName)
   

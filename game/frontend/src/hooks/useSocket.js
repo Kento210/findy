@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import io from 'socket.io-client'
 
+/**
+ * Socket.ioを使用したリアルタイムゲーム管理フック
+ * @returns {Object} ゲーム状態と操作関数を含むオブジェクト
+ */
 export function useSocket() {
   const [socket, setSocket] = useState(null)
   const [gameState, setGameState] = useState('setup') // setup, waiting, battle, judging, result
@@ -23,14 +27,14 @@ export function useSocket() {
       setPlayerRole(data.playerRole)
       setGameState('battle')
       
-      // 評価データを保存
+      // 評価データを状態に保存
       const opponentRole = data.playerRole === 'player1' ? 'player2' : 'player1'
       setEvaluations({
         [data.playerRole]: data.evaluation || null,
         [opponentRole]: data.opponentEvaluation || null
       })
       
-      // プレイヤー情報を正しく設定
+      // プレイヤー1とプレイヤー2の情報を正しく設定
       const gameData = {
         player1: {
           model: data.opponent.model || 'Unknown',
@@ -44,7 +48,7 @@ export function useSocket() {
         }
       }
       
-      // 自分のデータを設定
+      // 一時保存された自分の入力データを取得
       const playerData = window.playerInputData || { model: 'Unknown', output: '' }
       
       if (data.playerRole === 'player1') {
@@ -73,7 +77,7 @@ export function useSocket() {
       
       setCurrentGame(gameData)
       
-      // 1秒後に判定画面に移行
+      // バトル表示後、1秒後に判定画面に移行
       setTimeout(() => {
         console.log('Moving to judging state...')
         setGameState('judging')
@@ -98,10 +102,14 @@ export function useSocket() {
     return () => newSocket.close()
   }, [])
 
+  /**
+   * マッチメイキングを開始する
+   * @param {Object} playerData - プレイヤーのモデルと出力情報
+   */
   const findMatch = (playerData) => {
     if (socket) {
       socket.emit('findMatch', playerData)
-      // 自分の入力データを一時保存
+      // React Hooksの依存関係問題を回避するための一時保存
       window.playerInputData = playerData
     }
   }
@@ -116,6 +124,9 @@ export function useSocket() {
     }
   }
 
+  /**
+   * ゲーム状態をリセットして初期状態に戻す
+   */
   const resetGame = () => {
     setGameState('setup')
     setCurrentGame(null)
