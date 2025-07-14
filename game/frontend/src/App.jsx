@@ -23,7 +23,7 @@ const theme = createTheme({
 })
 
 function App() {
-  const [selectedModel, setSelectedModel] = useState('')
+  const [selectedModel, setSelectedModel] = useState('OpenAI 4o')
   const [aiOutput, setAiOutput] = useState('')
   
   const {
@@ -53,7 +53,7 @@ function App() {
 
   const handleNewGame = () => {
     resetGame()
-    setSelectedModel('')
+    setSelectedModel('OpenAI 4o')
     setAiOutput('')
   }
 

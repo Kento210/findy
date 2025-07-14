@@ -18,8 +18,17 @@ fi
 echo "Building frontend..."
 if [ -d "game/frontend" ]; then
   cd game/frontend
-  npm ci
+  
+  # package-lock.jsonとnode_modulesを削除してクリーンインストール
+  echo "Cleaning frontend dependencies..."
+  rm -rf node_modules package-lock.json
+  
+  # 新しいLockfileを使用してインストール
+  npm install --no-optional
+  
+  # ビルド実行
   npm run build
+  
   cd ../..
 fi
 

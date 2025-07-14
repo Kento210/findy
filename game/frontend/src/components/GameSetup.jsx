@@ -24,15 +24,15 @@ export default function GameSetup({
 }) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-      <Paper elevation={1} sx={{ p: 3, maxWidth: '900px', width: '100%' }}>
-      <Typography variant="h5" gutterBottom align="center" color="primary" sx={{ mb: 3 }}>
-        ルート情報を入力してバトル開始
-      </Typography>
-      
-      <Grid container spacing={3} alignItems="stretch">
-        <Grid item xs={12} md={6}>
-          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+      <Paper elevation={1} sx={{ p: 4, maxWidth: '1000px', width: '100%' }}>
+        <Typography variant="h5" gutterBottom align="center" color="primary" sx={{ mb: 3 }}>
+          ルート情報を入力してバトル開始
+        </Typography>
+        
+        <Grid container spacing={2}>
+          {/* AIモデル選択セクション */}
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom sx={{ mb: 2, textAlign: 'left' }}>
               AIモデル選択
             </Typography>
             <FormControl fullWidth sx={{ mb: 2 }}>
@@ -69,7 +69,7 @@ export default function GameSetup({
             </FormControl>
             
             {selectedModel && (
-              <Box p={2} bgcolor="grey.50" borderRadius={1} sx={{ flex: 1 }}>
+              <Box p={2} bgcolor="grey.50" borderRadius={1} sx={{ mb: 3 }}>
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   {aiModelConfig[selectedModel]?.description}
                 </Typography>
@@ -78,40 +78,53 @@ export default function GameSetup({
                 </Typography>
               </Box>
             )}
-          </Box>
-        </Grid>
-        
-        <Grid item xs={12} md={6}>
-          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+          </Grid>
+          
+          {/* AI出力入力セクション */}
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom sx={{ mb: 2, textAlign: 'left' }}>
               AI出力入力
             </Typography>
             <TextField
               fullWidth
               multiline
-              rows={6}
+              rows={8}
               label="AIの出力結果を貼り付けてください"
               placeholder="大崎駅からFindyオフィスまでのルートをAIに聞いた結果を貼り付けてください..."
               value={aiOutput}
               onChange={(e) => setAiOutput(e.target.value)}
-              sx={{ flex: 1 }}
+              sx={{ 
+                mb: 3,
+                '& .MuiOutlinedInput-root': {
+                  '& textarea': {
+                    resize: 'vertical',
+                    minHeight: '200px'
+                  }
+                }
+              }}
             />
-          </Box>
+          </Grid>
+          
+          {/* ボタンセクション */}
+          <Grid item xs={12}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+              <Button 
+                variant="contained" 
+                size="large" 
+                onClick={onSubmit}
+                disabled={!selectedModel || !aiOutput.trim()}
+                sx={{ 
+                  py: 2, 
+                  px: 4,
+                  minWidth: '300px',
+                  fontSize: '1.1rem'
+                }}
+              >
+                対戦相手を探す
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
-        
-        <Grid item xs={12}>
-          <Button 
-            variant="contained" 
-            size="large" 
-            onClick={onSubmit}
-            disabled={!selectedModel || !aiOutput.trim()}
-            fullWidth
-            sx={{ py: 2 }}
-          >
-対戦相手を探す
-          </Button>
-        </Grid>
-      </Grid>
       </Paper>
     </Box>
   )

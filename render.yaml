@@ -3,8 +3,8 @@ services:
     name: ai-route-battle-backend
     env: node
     plan: free
-    buildCommand: npm run build:backend
-    startCommand: npm start
+    buildCommand: ./build-render-v2.sh
+    startCommand: cd game/backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -15,7 +15,7 @@ services:
     name: ai-route-battle-frontend
     env: static
     plan: free
-    buildCommand: npm run build:frontend
+    buildCommand: ./build-render-v2.sh
     staticPublishPath: ./game/frontend/dist
     routes:
       - type: rewrite
